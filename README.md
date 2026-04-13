@@ -1,88 +1,96 @@
-# AIAutomationDevSecOps Workshop Day 1: Environment Setup Guide
+# AIAutomationDevSecOps Workshop: Outline & Environment Setup
 
-ยินดีต้อนรับสู่ Workshop Day 1! เอกสารนี้จะเป็นคู่มือแบบ Step-by-Step สำหรับการเตรียมสภาพแวดล้อม (Environment) ทั้งเครื่องมือการโจมตี (Attacker) และเครื่องเป้าหมาย (Vulnerable Targets) ครับ
+## 📅 Workshop Outline (Agenda - 3 Days, 1 - 1.5 Hours/Day)
 
----
-
-## Step 1: Install Prerequisites (โปรแกรมพื้นฐาน)
-
-### 1. Docker Desktop
-เราจะใช้ Docker ในการรันเครื่องเป้าหมายอย่าง OWSAP Juice Shop และ Metasploitable 2 เพื่อให้ง่ายและไม่กินทรัพยากรเครื่องมากเกินไป
-1. ดาวน์โหลดและติดตั้ง: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-2. **การตรวจสอบ:** เปิด Terminal / Command Prompt และพิมพ์คำสั่ง
-   ```bash
-   docker --version
-   ```
-
-### 2. Git
-ใช้สำหรับดาวน์โหลดโค้ดและ Repository ต่าง ๆ เช่น MCP Servers
-1. ดาวน์โหลดและติดตั้ง: [Git](https://git-scm.com/downloads)
-2. **การตรวจสอบ:** พิมพ์คำสั่ง
-   ```bash
-   git --version
-   ```
+เพื่อให้สอดคล้องกับเวลา 1-1.5 ชั่วโมงต่อวัน เนื้อหาของ Workshop จะถูกแบ่งออกเป็น 3 วัน เพื่อให้ผู้เข้าร่วมได้เรียนรู้และลงมือทำอย่างค่อยเป็นค่อยไปครับ
 
 ---
 
-## Step 2: Set up the Attacker Machine (Kali Linux)
+### **Day 1: Foundations & Dev Automation Setup (ปูพื้นฐานและวางระบบอัตโนมัติ)**
+*ระยะเวลาที่ใช้: 1 - 1.5 ชั่วโมง*
+*   **[ 20 นาที ]** แนะนำหลักสูตร AIAutomationDevSecOps และการรับมือภัยคุกคามด้วยหลักการ **OWASP Top 10 (2025)**
+*   **[ 30 นาที ]** Dev Automation & Lab Setup: การเตรียมเครื่องมือและการ Deploy แบบอัตโนมัติ (Automated Provisioning)
+    *   การตั้งค่ากระบวนการ **Dev Automation** (การใช้สคริปต์/Docker Compose/AI Tools ในการจัดการ Environment)
+    *   การดีพลอยเครื่องเป้าหมายจำลอง (**LLMGoat**)
+*   **[ 20 นาที ]** Attacker Environment & Threat Intelligence
+    *   ติดตั้งและปรับแต่งเครื่องโจมตี **Kali Linux** (ผ่าน Docker Desktop)
+    *   สาธิต Crash Course เบื้องต้น: วิเคราะห์ภัยคุกคามด้วย **VirusTotal**
+*   **[ 10 นาที ]** ถาม-ตอบ และตรวจสอบความพร้อม (Verify Systems) ให้ผู้เรียนทุกคนพร้อมสำหรับวันต่อไป
 
-เครื่องมือหลักที่เราจะใช้ในการแฮ็กหรือทดสอบระบบคือ Kali Linux สามารถเลือกติดตั้งได้ 2 รูปแบบ:
+---
 
-**Option A: Virtual Machine (แนะนำ - ได้ GUI และครบเครื่อง)**
-1. ติดตั้ง VM Player เช่น [VirtualBox](https://www.virtualbox.org/) หรือ VMware
-2. ดาวน์โหลด Kali Linux แบบ Pre-built VM (เลือกให้ตรงกับ VM Player): [Kali Linux VMs](https://www.kali.org/get-kali/#kali-virtual-machines)
-3. Import ไฟล์เข้าสู่โปรแกรมและกดเปิดเครื่อง (Username/Password เริ่มต้นคือ: `kali` / `kali`)
+### **Day 2: Red Team Operations (ปฏิบัติการเจาะระบบแบบ Whitebox & Blackbox)**
+*ระยะเวลาที่ใช้: 1 - 1.5 ชั่วโมง*
+*   **[ 30 นาที ]** AI Blackbox & Whitebox Pentest: 
+    *   เรียนรู้ความแตกต่างระหว่างการแฮ็กแบบไม่รู้โครงสร้าง (Blackbox) กับการตรวจโค้ดระบบ AI (Whitebox)
+    *   วิเคราะห์การทำงานของ LLM และทำความเข้าใจ Architecture ของ **LLMGoat**
+*   **[ 30 นาที ]** Hands-On AI Security Offensive: 
+    *   ลงมือเจาะระบบและหลอกลวง **AI Agent** (โปรเจกต์ LLMGoat) อ้างอิง OWASP Top 10 for LLMs
+    *   ฝึกหาช่องโหว่แบบ Prompt Injection, Data Leakage และ Insecure Output Handling
+*   **[ 20 นาที ]** สรุปข้อมูลช่องโหว่: รวบรวมหลักฐานและข้อมูลที่ตรวจเจอทั้งหมดในวันนี้ (Artifacts) เตรียมส่งต่อให้ทีมป้องกันเซสชั่นหน้า
 
-**Option B: Docker (สำหรับคนที่ต้องการแค่ Command Line)**
+---
+
+### **Day 3: Blue Team Operations (Report, Monitor & Audit)**
+*ระยะเวลาที่ใช้: 1 - 1.5 ชั่วโมง*
+*   **[ 30 นาที ]** สร้างผู้ตรวจการ AI (Build AI Monitor Agent):
+    *   ติดตั้งและปรับแต่ง **Wazuh-MCP-Server** (Security Monitor) 
+    *   เชื่อมต่อ Agent เข้ากับ **LLMGoat** เพื่อดักจับพฤติกรรมที่น่าสงสัยตามมาตรฐาน OWASP Top 10 for LLMs
+*   **[ 30 นาที ]** Monitor & Audit (ตรวจสอบทราฟฟิกและพฤติกรรม LLM):
+    *   ตรวจสอบประวัติทราฟฟิก (Log & Event) จากการโจมตี Prompt Injection และ Data Leakage เมื่อวาน
+    *   ใช้ AI วิเคราะห์และ Audit การตัดสินใจของ LLMGoat ว่าถูกหลอกลวงสำเร็จในจุดใดบ้าง
+*   **[ 20 นาที ]** Automated Reporting & Wrap-up:
+    *   ประยุกต์ทำรายงานสรุปช่องโหว่ (Vulnerability Report) ด้วย AI จากข้อมูล Red Team 
+    *   ถาม-ตอบ Q&A และสรุปแนวทางการประยุกต์ใช้ AIAutomationDevSecOps ในการทำงานจริง
+
+---
+
+## 🛠️ Environment Setup Guide (คู่มือเตรียมความพร้อม)
+
+### 1. Prerequisites (โปรแกรมพื้นฐาน)
+*   **Code Editor & AI Assistant:** แนะนำ VS Code พร้อมเสริมด้วย **Antigravity** และใช้งานร่วมกับ **Opencode CLI** เพื่อการใช้ AI ช่วยทำงานให้ครอบคลุมทั้งหน้า UI และหน้าต่าง Terminal
+*   **LLM API (โมเดล AI):** คลาสนี้จะใช้ **GLM (Zhipu AI)** เป็นสมองหลัก ผู้เรียนจำเป็นต้องเปิดบัญชีเพื่อรับ API Key ฟรีที่ [BigModel Platform](https://open.bigmodel.cn/) ก่อนเริ่มคลาส
+*   **Docker Desktop:** ใช้สำหรับรันเซอร์วิสเป้าหมายและจำลองระบบ [ดาวน์โหลด Docker Desktop](https://www.docker.com/products/docker-desktop/)
+*   **Git:** ใช้สำหรับดาวน์โหลดไฟล์โปรเจกต์ [ดาวน์โหลด Git](https://git-scm.com/downloads)
+
+### 2. Set up AI Automation (Opencode CLI & GLM)
+ตั้งค่าให้ Opencode CLI ทำงานร่วมกับ โมเดล Zhipu AI (GLM) โดยเปิด Terminal แล้วรันคำสั่ง:
 ```bash
-docker pull kalilinux/kali-rolling
-docker run -ti kalilinux/kali-rolling /bin/bash
+# ติดตั้ง Opencode CLI (กรณีใช้ Node.js)
+npm install -g opencode-cli
+
+# ตั้งค่าให้ Opencode เชื่อมต่อกับ Zhipu AI (GLM-4)
+opencode config set provider zhipu
+opencode config set api_key "ใส่_API_KEY_ที่ได้จาก_BigModel_ที่นี่"
 ```
-*(หมายเหตุ: หากใช้ Docker คุณจะต้องติดตั้งเครื่องมือเอง เช่น `apt update && apt install -y metasploit-framework nmap curl`)*
 
----
+### 3. Set up the Attacker Machine (Kali Linux)
+รัน Kali Linux ผ่าน Docker Desktop แบบ Background (เพื่อสามารถกลับมาใช้งานซ้ำได้ในวันต่อๆ ไป):
+```bash
+# 1. สร้างและรัน Kali Container
+docker run --name attacker_kali -itd kalilinux/kali-rolling
 
-## Step 3: Deploy Vulnerable Targets (เครื่องเป้าหมาย)
+# 2. เข้าสู่ Shell ของ Kali Linux
+docker exec -it attacker_kali /bin/bash
 
-เราจะเปิดระบบที่มีช่องโหว่เพื่อให้เราทดลองเจาะระบบได้จำลอง
+# 3. อัปเดตและติดตั้งเครื่องมือเจาะระบบพื้นฐาน (รันภายในหน้าจอ Kali)
+apt update && apt install -y kali-linux-default curl jq
+```
 
-### 1. OWASP Juice Shop (เป้าหมายประเภท Web Application)
-Juice Shop เป็นเว็บแอปพลิเคชันสมัยใหม่ที่จงใจใส่ช่องโหว่ (OWASP Top 10) ไว้ให้เราได้ฝึกฝน
-- **เปิด Terminal และรันคำสั่ง:**
-  ```bash
-  docker run --rm -p 3000:3000 bkimminich/juice-shop
-  ```
-- **การเข้าใช้งาน:** เปิดเบราว์เซอร์ไปที่ http://localhost:3000
+### 4. Deploy Vulnerable Targets (เครื่องเป้าหมาย)
 
-### 2. Metasploitable 2 (เป้าหมายประเภท Infrastructure / Network)
-เป็น Linux Server ที่เต็มไปด้วยบริการที่มีช่องโหว่ (เช่น FTP, SSH เก่า ๆ ฯลฯ)
-- **ดาวน์โหลดรูปแบบ VM (ดั้งเดิม):** [Rapid7 Metasploitable 2](https://www.rapid7.com/products/metasploit/metasploitable/)
-- **ทางเลือกในการรันด้วย Docker:**
-  ```bash
-  docker run -it --rm -p 21:21 -p 80:80 -p 445:445 tleemcjr/metasploitable2:latest
-  ```
-*(คำเตือน: โปรดรันเครื่องมือเหล่านี้ในสภาพแวดล้อมจำลอง (Local/VM Network) ที่ปลอดภัยและไม่ต่อกับอินเทอร์เน็ตสาธารณะ)*
+**เป้าหมาย: LLMGoat (Vulnerable AI Agent)**
+เป้าหมาย AI Agent ที่ถูกสร้างมาให้มีช่องโหว่ (OWASP Top 10 for LLMs)
+```bash
+git clone https://github.com/SECFORCE/LLMGoat.git
+cd LLMGoat
+docker compose up -d
+```
+*(เมื่อรันเสร็จเรียบร้อย จะสามารถเข้าถึงตัว AI เป็นเครื่องเหยื่อได้ผ่านเบราว์เซอร์)*
 
----
-
-## Step 4: Clone MCP Servers (สำหรับระบบ Monitoring & AI)
-
-เราจะเตรียมดาวน์โหลด Model Context Protocol (MCP) Servers ที่เกี่ยวข้องเอาไว้ในเครื่อง
-
-เปิด Terminal, สร้างโฟลเดอร์สำหรับ Workshop และรันคำสั่งเหล่านี้:
-
-**1. Wazuh MCP Server**
+### 5. Clone Monitoring & AI Protocol Servers (MCP)
+**Wazuh MCP Server (Security Monitoring)**
+ใช้สำหรับมอนิเตอร์และตรวจสอบภัยคุกคามใน LLMGoat (การตั้งค่า Config และทดสอบระบบจะทำในเนื้อหา **Day 3**)
 ```bash
 git clone https://github.com/gensecaihq/Wazuh-MCP-Server.git
 ```
-
-**2. Zabbix MCP Server**
-```bash
-git clone https://github.com/mpeirone/zabbix-mcp-server.git
-```
-
----
-
-## Useful Resources (แหล่งข้อมูลเพิ่มเติมสำหรับ Workshop)
-- **OWASP Top 10 (2025):** รายชื่อช่องโหว่ที่อันตรายและพบบ่อยที่สุดในปีล่าสุด [https://owasp.org/Top10/2025/](https://owasp.org/Top10/2025/)
-- **VirusTotal:** เครื่องมือวิเคราะห์มัลแวร์, ไอพี, หรือโดเมนที่น่าสงสัย [https://www.virustotal.com/](https://www.virustotal.com/)
