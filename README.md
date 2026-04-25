@@ -79,14 +79,15 @@ apt update && apt install -y kali-linux-default curl jq
 
 ### 4. Deploy Vulnerable Targets (เครื่องเป้าหมาย)
 
-**เป้าหมาย: LLMGoat (Vulnerable AI Agent)**
-เป้าหมาย AI Agent ที่ถูกสร้างมาให้มีช่องโหว่ (OWASP Top 10 for LLMs)
+**เป้าหมาย: LLMGoat (Vulnerable AI Agent — patched ให้ใช้ Ollama)**
+เป้าหมาย AI Agent ที่ถูกสร้างมาให้มีช่องโหว่ (OWASP Top 10 for LLMs) — workshop นี้ patch LLMGoat ให้เรียก Ollama แทน llama-cpp ฝังในตัว เพื่อประหยัด RAM และใช้ model เดียวกับ Aider
 ```bash
-git clone https://github.com/SECFORCE/LLMGoat.git
+git clone https://github.com/MegaWiz-Dev-Team/LLMGoat.git
 cd LLMGoat
-docker compose up -d
+# apply patch (manager.py / definitions.py / compose.local.yaml) — instructor distribute
+docker compose -f compose.local.yaml up -d --build
 ```
-*(เมื่อรันเสร็จเรียบร้อย จะสามารถเข้าถึงตัว AI เป็นเครื่องเหยื่อได้ผ่านเบราว์เซอร์)*
+*(default port mapping: host 5001 → container 5000 หลบ AirPlay บน macOS — เปิด `http://localhost:5001`)*
 
 ### 5. Clone Monitoring & AI Protocol Servers (MCP)
 **Wazuh MCP Server (Security Monitoring)**
