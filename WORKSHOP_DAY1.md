@@ -8,9 +8,27 @@
 
 ---
 
+## 🪟 สำหรับนักเรียน Windows — อ่านก่อนเริ่ม
+
+> ทุกคำสั่ง `[HOST]` ในเอกสารนี้ใช้ **bash syntax** — Windows ต้องเตรียม 4 อย่างนี้ก่อน:
+>
+> | สิ่งที่ต้องติดตั้ง | ดาวน์โหลด | หมายเหตุ |
+> |------------------|-----------|----------|
+> | **Docker Desktop** | https://docs.docker.com/desktop/install/windows-install/ | เปิดทิ้งไว้ตลอด workshop |
+> | **Git for Windows** (ได้ Git Bash มาด้วย) | https://git-scm.com/download/win | ติ๊ก "Git Bash Here" ตอนติดตั้ง |
+> | **GitHub CLI** | https://cli.github.com/ | ใช้ส่งการบ้าน |
+> | **Ollama** | https://ollama.com/download → OllamaSetup.exe | รัน installer ปกติ |
+>
+> ⚠️ **ใช้ Git Bash เท่านั้น** สำหรับคำสั่ง `[HOST]` — ไม่ใช่ CMD หรือ PowerShell
+> Git Bash รองรับ `export`, `grep`, `curl`, `cat`, `wc` ได้เหมือน Mac/Linux ทุกอย่าง
+> เปิด Git Bash: คลิกขวาที่ Desktop → **"Git Bash Here"** หรือค้นหา "Git Bash" ใน Start
+
+---
+
 ## ⚙️ ตั้งค่าก่อนเริ่ม (ทุกคนทำก่อน session)
 
 ```bash
+# 🪟 Windows: เปิด Git Bash ก่อน (ไม่ใช่ CMD / PowerShell)
 # เลือก MODEL ตามสเปคเครื่อง — เปลี่ยนแค่บรรทัดนี้ บรรทัดเดียว
 export MODEL=qwen2.5-coder:3b      # RAM 8GB+  ⭐ แนะนำ
 # export MODEL=qwen2.5-coder:1.5b  # RAM 4-8GB
@@ -22,11 +40,12 @@ export MODEL=qwen2.5-coder:3b      # RAM 8GB+  ⭐ แนะนำ
 ## 👨‍🏫 Instructor Prep (30 นาทีก่อน session)
 
 ```bash
+# 🪟 Windows: รันใน Git Bash
 # ตรวจสอบทุกอย่างพร้อมก่อนสอน
-ollama list                                   # ต้องเห็น model
-docker ps                                     # Docker รัน
-curl -s http://localhost:5001 | head -3       # LLMGoat พร้อม
-docker exec attacker_kali aider --version     # Kali + Aider พร้อม
+ollama list                                                         # ต้องเห็น model
+docker ps                                                           # Docker รัน
+curl -s -o /dev/null -w "%{http_code}" http://localhost:5001        # ต้องได้ 200
+docker exec attacker_kali bash -c 'source ~/.bashrc && aider --version'  # Kali + Aider พร้อม
 ```
 
 Admin Portal → เปิด **Warmup Pre-test session** → สร้าง PIN (7 ข้อ, 20 วิ/ข้อ)
@@ -99,10 +118,11 @@ DevSecOps   = Security ฝังอยู่ใน Dev pipeline ตั้งแ�
 
 **ขั้นตอนที่ 1 — ดาวน์โหลด Ollama:**
 ```
+Windows: https://ollama.com/download  → รัน OllamaSetup.exe  ⭐ (นักเรียนส่วนใหญ่)
 macOS:   https://ollama.com/download  → ลาก Ollama.app ไป Applications
-Windows: https://ollama.com/download  → รัน OllamaSetup.exe
 Linux:   curl -fsSL https://ollama.com/install.sh | sh
 ```
+> 🪟 Windows: หลังติดตั้ง Ollama จะรันเป็น background service อัตโนมัติ — ไม่ต้องรัน `ollama serve` แยก
 
 **ขั้นตอนที่ 2 — Pull model (เลือกแค่ 1 ตัว):**
 ```bash
@@ -132,7 +152,7 @@ cd LLMGoat
 docker compose -f compose.local.yaml up -d --build
 ```
 > Build ครั้งแรก ~80 วินาที — รันรอบต่อไปใช้ cache ~5 วิ
-> Port mapping default: host **5001** → container 5000 (หลบ AirPlay บน macOS)
+> Port mapping: host **5001** → container 5000
 
 **ขั้นตอนที่ 2 — ตรวจสอบ:**
 ```bash
@@ -166,7 +186,8 @@ I have this Docker error:
 How do I fix this? Give me the exact command.
 ```
 
-> AI จะแนะนำ `docker ps`, `lsof -ti:5001 | xargs kill -9` หรือ `docker stop` → นี่คือ Dev Automation จริงๆ
+> AI จะแนะนำคำสั่งแก้ปัญหา port conflict → นี่คือ Dev Automation จริงๆ
+> 🪟 Windows: คำสั่ง `lsof` ไม่มี — ถ้า AI แนะนำ `lsof` ให้บอกว่า "I'm on Windows, give me the equivalent command"
 
 ---
 
@@ -178,11 +199,13 @@ How do I fix this? Give me the exact command.
 
 **ขั้นตอนที่ 1 — Pull + Start Kali:**
 ```bash
+# 🪟 Windows / Mac (Docker Desktop) — ใช้คำสั่งนี้:
 docker run --name attacker_kali \
   -itd \
-  --add-host=host.docker.internal:host-gateway \
   kalilinux/kali-rolling
 ```
+> 🪟 **Docker Desktop (Windows/Mac):** `host.docker.internal` ทำงานอัตโนมัติ — ไม่ต้องใส่ `--add-host`
+> 🐧 Linux Docker Engine เท่านั้น ที่ต้องเพิ่ม `--add-host=host.docker.internal:host-gateway`
 
 **ขั้นตอนที่ 2 — เข้า Kali shell:**
 ```bash
@@ -217,13 +240,24 @@ uv tool install aider-chat --with audioop-lts
 # ใช้เวลา ~80 วินาที (ครั้งเดียว — ครั้งต่อมาใช้ cache)
 ```
 
-**ขั้นตอนที่ 3 — ตั้งค่า Ollama endpoint:**
+**ขั้นตอนที่ 3 — เพิ่ม PATH และบันทึกถาวร:**
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+```
+> ⚠️ ขั้นตอนนี้สำคัญมาก — หากไม่ทำ `aider` จะ "not found" ทุกครั้งที่ `docker start` ใหม่
+
+**ขั้นตอนที่ 4 — ตั้งค่า Ollama endpoint:**
 ```bash
 export OLLAMA_API_BASE=http://host.docker.internal:11434
 export MODEL=qwen2.5-coder:3b   # เปลี่ยนตาม model ที่ pull มา
+
+# บันทึกถาวรใน .bashrc ด้วย
+echo 'export OLLAMA_API_BASE=http://host.docker.internal:11434' >> ~/.bashrc
+echo 'export MODEL=qwen2.5-coder:3b' >> ~/.bashrc
 ```
 
-**ขั้นตอนที่ 4 — ทดสอบ:**
+**ขั้นตอนที่ 5 — ทดสอบ:**
 ```bash
 aider --model ollama/$MODEL --version   # → aider 0.86.x
 ```
@@ -265,22 +299,25 @@ URL ที่ใช้ demo: http://testphp.vulnweb.com
 ```bash
 # 🖥️ [HOST] รันทีละบรรทัด แล้วบอก result ใน chat
 
+# 🪟 Windows: รันใน Git Bash
 ollama list                                    # [1] เห็น model?
 docker ps --format "{{.Names}}" | grep llmgoat # [2] LLMGoat รัน?
 curl -s -o /dev/null -w "%{http_code}" http://localhost:5001  # [3] ได้ 200?
 docker ps --format "{{.Names}}" | grep kali   # [4] Kali รัน?
-docker exec attacker_kali aider --version      # [5] Aider พร้อม?
+docker exec attacker_kali bash -c 'source ~/.bashrc && aider --version'  # [5] Aider พร้อม?
 ```
 
 ### Troubleshooting
 
-| ปัญหา | แก้ไข |
-|-------|-------|
-| `ollama list` ว่างเปล่า | `ollama pull qwen2.5-coder:3b` |
-| LLMGoat ไม่ขึ้น | `docker compose -f compose.local.yaml logs` หรือ `docker logs llmgoat-cpu` ดู error |
-| `host.docker.internal` ใช้ไม่ได้ | ลอง `docker run` ใหม่พร้อม `--add-host` |
-| `pip/pipx install aider-chat` fail (numpy 1.24.3 / audioop) | ใช้ `uv tool install aider-chat --with audioop-lts` แทน |
-| Kali container หาย | `docker start attacker_kali` |
+| ปัญหา | สาเหตุ | แก้ไข |
+|-------|--------|-------|
+| Docker command ไม่ทำงาน | เปิด CMD/PowerShell แทน Git Bash | เปิด **Git Bash** แล้วลองใหม่ |
+| Docker Desktop ไม่เริ่ม | App ไม่ได้เปิด | ค้นหา "Docker Desktop" ใน Start menu → รอ icon ใน system tray เปลี่ยนเป็นปกติ |
+| `ollama list` ว่างเปล่า | ยังไม่ได้ pull | `ollama pull qwen2.5-coder:3b` |
+| LLMGoat ไม่ขึ้น | build error หรือ port ซ้ำ | `docker compose -f compose.local.yaml logs` หรือ `docker logs llmgoat-cpu` |
+| `host.docker.internal` ใช้ไม่ได้ (Linux เท่านั้น) | Linux Docker Engine ต้องเพิ่ม flag | รัน Kali ใหม่พร้อม `--add-host=host.docker.internal:host-gateway` |
+| `pip/pipx install aider-chat` fail | numpy 1.24.3 / audioop ไม่มี wheel | ใช้ `uv tool install aider-chat --with audioop-lts` แทน |
+| Kali container หาย | หยุดรันหลัง restart | `docker start attacker_kali` |
 
 ---
 
@@ -304,12 +341,19 @@ ollama run $MODEL "What is Prompt Injection? Answer in 2 sentences."
 > ถ่าย screenshot ที่เห็น Billy the Goat ตอบกลับ chat ≥ 1 รอบ
 
 **ภาพที่ 3 — Aider create file ผ่าน Ollama (end-to-end ⭐):**
+
+ขั้นตอนที่ 1 — เข้า Kali (รันใน Git Bash บน Windows หรือ Terminal บน Mac):
+```bash
+# 🖥️ [HOST]
+docker exec -it attacker_kali /bin/bash
+```
+
+ขั้นตอนที่ 2 — รันใน Kali shell:
 ```bash
 # 🐧 [KALI]
-export PATH=$HOME/.local/bin:$PATH
-export OLLAMA_API_BASE=http://host.docker.internal:11434
+source ~/.bashrc   # โหลด PATH + env vars ที่ตั้งไว้ตอนติดตั้ง
 cd /tmp && mkdir -p hw && cd hw && git init -q
-aider --model ollama/qwen2.5-coder:3b --no-auto-commits --no-stream --yes-always \
+aider --model ollama/$MODEL --no-auto-commits --no-stream --yes-always \
       --message "Write a Python one-liner that prints hello world"
 ```
 > ถ่าย screenshot ที่เห็น `Applied edit to hello_world.py` + ไฟล์ถูกสร้าง — ครอบทั้ง stack (Kali → host network → Ollama → response → file write)
@@ -331,6 +375,9 @@ my-ai-devsecops-lab/
 
 ### Git Workflow — ส่งงานใน 5 ขั้นตอน
 
+> 🪟 **Windows:** รันทุกคำสั่งใน **Git Bash** (ไม่ใช่ CMD) — `mkdir -p`, `touch`, `git`, `gh` ทำงานได้ปกติ
+> สำหรับ screenshots: drag ไฟล์จาก Explorer ไปวางใน folder `day1/screenshots/` ได้เลย
+
 ```bash
 # 1) Login GitHub CLI (ครั้งแรกเท่านั้น)
 gh auth login
@@ -343,6 +390,7 @@ cd my-ai-devsecops-lab
 mkdir -p day1/screenshots
 touch README.md day1/owasp-notes.md day1/troubleshooting.md day1/questions.md
 # ...copy 3 screenshots ไป day1/screenshots/ และเขียนเนื้อหา .md ทั้ง 3 ไฟล์...
+# 🪟 Windows tip: เขียน .md ด้วย Notepad, VS Code, หรือ Notepad++ ก็ได้
 
 # 4) Stage → Commit → Push
 git status
@@ -373,13 +421,15 @@ gh repo view --web   # → copy URL จาก browser
 
 ## 📦 Pre-pull Wazuh (ทำหลังส่งการบ้าน — ปล่อยรันข้ามคืน)
 
-> 🖥️ **[HOST]** — เปิด terminal ใหม่แล้วรัน ปล่อยทิ้งไว้
+> 🖥️ **[HOST]** — เปิด **Git Bash** ใหม่แล้วรัน ปล่อยทิ้งไว้ (~5GB, 15-30 นาที)
 
 ```bash
+# 🪟 Windows: รันใน Git Bash — ห้ามปิด terminal จนกว่าจะ pull เสร็จ
 git clone https://github.com/wazuh/wazuh-docker.git -b v4.11.0
 cd wazuh-docker/single-node
 docker compose pull
 ```
+> 🪟 Windows tip: ถ้า terminal ปิดระหว่าง pull → รัน `docker compose pull` ใหม่ได้เลย มัน resume ต่อจากที่ค้างได้
 
 ตรวจสอบตอนเช้า:
 ```bash
