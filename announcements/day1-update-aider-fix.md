@@ -11,6 +11,40 @@
 
 ขอบคุณที่ร่วม Day 1 ของ AI Automation DevSecOps Workshop วันนี้ — ทุกคนทำดีมากครับ 👏
 
+## 🐐 LLMGoat — เปลี่ยนเป็น clone จาก workshop fork
+
+ในวัน Day 1 เรา clone จาก **upstream SECFORCE/LLMGoat** ซึ่งฝัง `llama-cpp-python` + ดาวน์โหลด `gemma-2.gguf` (~5.5 GB) ในตัว — กิน RAM 6-7 GB และเปลือง bandwidth (ไม่ได้ใช้ Ollama ที่เราเตรียมไว้!)
+
+ผมเลย fork + patch ให้เรียก **Ollama** ที่ host แทน → ใช้ model ตัวเดียวกับ Aider, ประหยัด RAM, ไม่ต้องโหลด gguf
+
+### วิธีอัปเดต — ลบ clone เดิม + clone fork ใหม่
+
+```bash
+# 🖥️ HOST — หยุด + ลบ container + folder เก่า
+docker stop llmgoat-cpu 2>/dev/null
+docker rm llmgoat-cpu 2>/dev/null
+cd ~ && rm -rf LLMGoat
+
+# Clone จาก workshop fork (มี patch ครบแล้ว)
+git clone https://github.com/MegaWiz-Dev-Team/LLMGoat.git
+cd LLMGoat
+docker compose -f compose.local.yaml up -d --build
+# Build ครั้งแรก ~80 วิ — ครั้งถัดไปใช้ cache ~5 วิ
+
+# Verify เชื่อม Ollama ได้
+docker logs llmgoat-cpu | grep -E "Ollama host|Selecting Ollama"
+# ต้องเห็น:
+#   Ollama host: http://host.docker.internal:11434
+#   Selecting Ollama model: qwen2.5-coder:3b
+
+# เปิด browser → http://localhost:5001
+```
+
+> **Port:** ใช้ `5001` (เพราะ macOS port 5000 ชน AirPlay Receiver) — compose.local.yaml ตั้ง mapping `5001:5000` ไว้แล้ว ไม่ต้องเซ็ตเอง
+> **Repo URL ใหม่:** `https://github.com/MegaWiz-Dev-Team/LLMGoat.git` (parent: SECFORCE/LLMGoat, GPL-3.0)
+
+---
+
 ## 🐛 Bug Report — สาเหตุที่ aider ติดตั้งไม่ผ่าน
 
 หลัง session จบ ผมไป test environment ของ Kali rolling เวอร์ชันปัจจุบัน เจอว่ามี 2 issues ที่ทำให้ command ใน slide เดิมพังครับ:
@@ -20,7 +54,7 @@
 
 ทั้ง `pip install aider-chat --break-system-packages` และ `pipx install aider-chat` พังจาก issue นี้ทั้งคู่ครับ
 
-## ✅ Fix — ใช้ uv แทน (แนะนำใหม่ใน slide แล้ว)
+## ✅ Fix Aider — ใช้ uv แทน (แนะนำใหม่ใน slide แล้ว)
 
 ```bash
 docker exec -it attacker_kali bash
